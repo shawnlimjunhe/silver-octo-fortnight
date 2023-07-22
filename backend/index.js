@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import { getCoinbaseDataForCurrency, filterAndFormatData, extractDataFromCoinbaseResponse } from './utils.js'
-import { savePriceAtTime } from './database/create.js'
+import { savePriceAtTime } from './database/priceConversionAtTime/create.js'
 
 const app = express();
 const port = 8000;
