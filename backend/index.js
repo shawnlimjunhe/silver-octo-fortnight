@@ -35,7 +35,6 @@ const fetchCurrencyData = async (allCurrencies) => {
   
   const queryDate = new Date();
   await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
-  // const flattenedData = Object.assign({}, ...filteredData);
   return filteredData
 }
 
@@ -55,8 +54,24 @@ app.get('/exchange-rates', async (req, res) => {
     const baseCurrencies = baseCurrencyOptions[base]
     const targetCurrencies = base === "fiat" ? crypto : fiat;
 
-    const baseCurrencyData = currencyData.filter((data) => baseCurrencies.includes(data.baseCurrency));
-    res.json(currencyData);
+    const baseCurrencyData = currencyData.filter((data) => baseCurrencies.includes(data.baseCurrency))
+      .map((data) => {
+        const { baseCurrency, targetCurrencies: targetPrice } = data;
+        const filteredTargetPrices = targetPrice.filter((targetData) => targetCurrencies.includes(targetData.currencyName))
+          .map((targetData) => {
+            const {currencyName, currencyPrice} = targetData;
+            return {
+              [currencyName]: currencyPrice
+            }
+          });
+        const flattenTargetPrices = Object.assign({}, ...filteredTargetPrices);
+        return {
+          [baseCurrency]: flattenTargetPrices
+        }
+      })
+    
+    const flattenedBaseCurrencyData = Object.assign({}, ...baseCurrencyData)
+    res.json(flattenedBaseCurrencyData);
   } catch (error) {
     res.status(500).json({error});
   }
