@@ -16,14 +16,15 @@ const formatRate = (rate) => {
   return numberValue.toFixed(2).toString();
 }
 
-const filterAndFormatData = (currencyData, targetCurrencies) => {
+const filterAndFormatData = (currencyData, allCurrencies) => {
   const {rates, currency: baseCurrency} = currencyData;
+  const targetCurrencies = allCurrencies.filter((currency) => currency !== baseCurrency);
   const filteredRates = targetCurrencies.reduce((obj, targetCurrency) => {
 
     obj[targetCurrency] = formatRate(rates[targetCurrency]);
     return obj;
   }, {});
-  
+
   return {
     baseCurrency,
     rates: filteredRates

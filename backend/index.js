@@ -29,10 +29,10 @@ async function connectToDatabase() {
 
 await connectToDatabase();
 
-const fetchCurrencyData = async (baseCurrencies, targetCurrencies) => {
-    const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
+const fetchCurrencyData = async (allCurrencies) => {
+    const rawCurrencyResponse =  await Promise.all(allCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
     const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
-                            .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, targetCurrencies))
+                            .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, allCurrencies))
     
     const queryDate = new Date();
     await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
@@ -43,9 +43,9 @@ const fetchCurrencyData = async (baseCurrencies, targetCurrencies) => {
 app.get('/exchange-rates', async (req, res) => {
   try {
     const { base } = req.query;
-    const baseCurrencies = baseCurrencyOptions[base]
-    const targetCurrencies = base === "fiat" ? crypto : fiat;
-    const currencyData = await fetchCurrencyData(baseCurrencies, targetCurrencies);
+    // const baseCurrencies = baseCurrencyOptions[base]
+    // const targetCurrencies = base === "fiat" ? crypto : fiat;
+    const currencyData = await fetchCurrencyData(allCurrencies);
     res.json(currencyData);
   } catch (error) {
     res.status(500).json({error});
