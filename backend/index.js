@@ -8,13 +8,21 @@ const targetUrl = "https://api.coinbase.com/v2/exchange-rates";
 
 const crypto = ['BTC', 'DOGE', 'ETH'];
 const fiat = ['USD', 'SGD', 'EUR'];
+const baseCurrencyOptions = {
+  crypto, 
+  fiat
+}
+
+const formQueryUrl = (currency) => `${targetUrl}?currency=${currency}`;
 
 app.get('/exchange-rates', async (req, res) => {
   const { base } = req.query;
 
-  const response = await axios.get(targetUrl);
-  
-  console.log(response.data);
+  const baseCurrencies = baseCurrencyOptions[base]
+
+  const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => axios.get(formQueryUrl(currency))));
+
+  console.log(rawCurrencyResponse);
 
   res.json({'queryParam': base});
 })
