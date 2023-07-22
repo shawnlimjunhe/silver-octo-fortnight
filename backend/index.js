@@ -11,6 +11,7 @@ const uri = 'mongodb://localhost:27017/currency_data';
 
 const crypto = ['BTC', 'DOGE', 'ETH'];
 const fiat = ['USD', 'SGD', 'EUR'];
+const allCurrencies = ['BTC', 'DOGE', 'ETH', 'USD', 'SGD', 'EUR']
 const baseCurrencyOptions = {
   crypto, 
   fiat
@@ -28,13 +29,7 @@ async function connectToDatabase() {
 
 await connectToDatabase();
 
-app.get('/exchange-rates', async (req, res) => {
-  try {
-    const { base } = req.query;
-
-    const baseCurrencies = baseCurrencyOptions[base]
-    const targetCurrencies = base === "fiat" ? crypto : fiat;
-
+const fetchCurrencyData = async (baseCurrencies, targetCurrencies) => {
     const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
     const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
                             .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, targetCurrencies))
@@ -42,8 +37,16 @@ app.get('/exchange-rates', async (req, res) => {
     const queryDate = new Date();
     await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
     // const flattenedData = Object.assign({}, ...filteredData);
+    return filteredData
+}
 
-    res.json(filteredData);
+app.get('/exchange-rates', async (req, res) => {
+  try {
+    const { base } = req.query;
+    const baseCurrencies = baseCurrencyOptions[base]
+    const targetCurrencies = base === "fiat" ? crypto : fiat;
+    const currencyData = await fetchCurrencyData(baseCurrencies, targetCurrencies);
+    res.json(currencyData);
   } catch (error) {
     res.status(500).json({error});
   }
