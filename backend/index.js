@@ -27,18 +27,20 @@ async function connectToDatabase() {
   }
 }
 
+const fetchCurrencyData = async (allCurrencies) => {
+  const rawCurrencyResponse =  await Promise.all(allCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
+  const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
+                          .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, allCurrencies))
+  
+  const queryDate = new Date();
+  await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
+  // const flattenedData = Object.assign({}, ...filteredData);
+  return filteredData
+}
+
 await connectToDatabase();
 
-const fetchCurrencyData = async (allCurrencies) => {
-    const rawCurrencyResponse =  await Promise.all(allCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
-    const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
-                            .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, allCurrencies))
-    
-    const queryDate = new Date();
-    await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
-    // const flattenedData = Object.assign({}, ...filteredData);
-    return filteredData
-}
+setInterval(() => fetchCurrencyData(allCurrencies), 100000);  // 100000 ms = 100 s
 
 app.get('/exchange-rates', async (req, res) => {
   try {
