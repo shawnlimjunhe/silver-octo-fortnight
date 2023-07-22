@@ -15,19 +15,45 @@ const baseCurrencyOptions = {
 
 const formQueryUrl = (currency) => `${targetUrl}?currency=${currency}`;
 
+const getCoinbaseDataForCurrency = (currency) =>  axios.get(formQueryUrl(currency));
+
+const extractDataFromCoinbaseResponse = (response) => response.data.data;
+
+const formatRate = (rate) => {
+  return rate
+}
+
+const filterAndFormatData = (currencyData, targetCurrencies) => {
+  const {rates, currency: baseCurrency} = currencyData;
+  const filteredRates = targetCurrencies.reduce((obj, targetCurrency) => {
+
+    obj[targetCurrency] = formatRate(rates[targetCurrency]);
+    return obj
+  }, {});
+
+  targetRates = {}
+  targetRates[baseCurrency] = filteredRates
+  return targetRates
+}
+
+
+
 app.get('/exchange-rates', async (req, res) => {
   try {
     const { base } = req.query;
 
     const baseCurrencies = baseCurrencyOptions[base]
+    const targetCurrencies = base === "fiat" ? crypto : fiat;
+
+    const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
   
-    const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => axios.get(formQueryUrl(currency))));
+    const unfilteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response));
   
-    const unfilteredResponseData = rawCurrencyResponse
+    const filteredData = unfilteredData.map((currencyData) => filterAndFormatData(currencyData, targetCurrencies))
+
+    const flattenedData = Object.assign({}, ...filteredData);
   
-    console.log(rawCurrencyResponse);
-  
-    res.json({'queryParam': base});
+    res.json(flattenedData);
   } catch (error) {
     res.status(500).json({error});
   }
