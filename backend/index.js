@@ -20,7 +20,13 @@ const getCoinbaseDataForCurrency = (currency) =>  axios.get(formQueryUrl(currenc
 const extractDataFromCoinbaseResponse = (response) => response.data.data;
 
 const formatRate = (rate) => {
-  return rate
+  const numberValue = parseFloat(rate);
+  if (numberValue < 1) {
+    // numbers to be formatted to 2 most significant digits e.g. 0.0034
+    return Number(numberValue.toPrecision(2)).toString();
+  }
+  // numbers to be rounded to 2 decimal places e.g. 1.23
+  return numberValue.toFixed(2).toString();
 }
 
 const filterAndFormatData = (currencyData, targetCurrencies) => {
