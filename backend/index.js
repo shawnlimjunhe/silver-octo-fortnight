@@ -1,45 +1,15 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
 
+import { getCoinbaseDataForCurrency, filterAndFormatData, extractDataFromCoinbaseResponse } from './utils.js'
 
 const app = express();
 const port = 8000;
-const targetUrl = "https://api.coinbase.com/v2/exchange-rates";
 
 const crypto = ['BTC', 'DOGE', 'ETH'];
 const fiat = ['USD', 'SGD', 'EUR'];
 const baseCurrencyOptions = {
   crypto, 
   fiat
-}
-
-const formQueryUrl = (currency) => `${targetUrl}?currency=${currency}`;
-
-const getCoinbaseDataForCurrency = (currency) =>  axios.get(formQueryUrl(currency));
-
-const extractDataFromCoinbaseResponse = (response) => response.data.data;
-
-const formatRate = (rate) => {
-  const numberValue = parseFloat(rate);
-  if (numberValue < 1) {
-    // numbers to be formatted to 2 most significant digits e.g. 0.0034
-    return Number(numberValue.toPrecision(2)).toString();
-  }
-  // numbers to be rounded to 2 decimal places e.g. 1.23
-  return numberValue.toFixed(2).toString();
-}
-
-const filterAndFormatData = (currencyData, targetCurrencies) => {
-  const {rates, currency: baseCurrency} = currencyData;
-  const filteredRates = targetCurrencies.reduce((obj, targetCurrency) => {
-
-    obj[targetCurrency] = formatRate(rates[targetCurrency]);
-    return obj
-  }, {});
-
-  targetRates = {}
-  targetRates[baseCurrency] = filteredRates
-  return targetRates
 }
 
 
@@ -52,13 +22,11 @@ app.get('/exchange-rates', async (req, res) => {
     const targetCurrencies = base === "fiat" ? crypto : fiat;
 
     const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
-  
-    const unfilteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response));
-  
-    const filteredData = unfilteredData.map((currencyData) => filterAndFormatData(currencyData, targetCurrencies))
-
+    const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
+                            .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, targetCurrencies))
+    
     const flattenedData = Object.assign({}, ...filteredData);
-  
+
     res.json(flattenedData);
   } catch (error) {
     res.status(500).json({error});
