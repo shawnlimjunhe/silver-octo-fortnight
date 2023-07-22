@@ -1,9 +1,12 @@
 import express from 'express';
+import mongoose from 'mongoose';
 
 import { getCoinbaseDataForCurrency, filterAndFormatData, extractDataFromCoinbaseResponse } from './utils.js'
 
 const app = express();
 const port = 8000;
+
+const uri = 'mongodb://localhost:27017/currency_data';
 
 const crypto = ['BTC', 'DOGE', 'ETH'];
 const fiat = ['USD', 'SGD', 'EUR'];
@@ -12,7 +15,17 @@ const baseCurrencyOptions = {
   fiat
 }
 
+async function connectToDatabase() {
+  try {
+    await mongoose.connect(uri)
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  }
+}
 
+await connectToDatabase();
 
 app.get('/exchange-rates', async (req, res) => {
   try {
