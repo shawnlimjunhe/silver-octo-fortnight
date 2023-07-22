@@ -1,0 +1,4 @@
+{
+  "crypto": ["BTC", "DOGE", "ETH"],
+  "fiat": ["USD", "SGD", "EUR"]
+}
