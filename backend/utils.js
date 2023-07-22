@@ -6,6 +6,8 @@ const getCoinbaseDataForCurrency = (currency) =>  axios.get(formQueryUrl(currenc
 
 const extractDataFromCoinbaseResponse = (response) => response.data.data;
 
+const flattenObject = (data) => Object.assign({}, ...data);
+
 const formatRate = (rate) => {
   const numberValue = parseFloat(rate);
   if (numberValue < 1) {
@@ -18,9 +20,9 @@ const formatRate = (rate) => {
 
 const filterAndFormatData = (currencyData, allCurrencies) => {
   const {rates, currency: baseCurrency} = currencyData;
+  // save needed currencies
   const targetCurrencies = allCurrencies.filter((currency) => currency !== baseCurrency);
   const filteredRates = targetCurrencies.reduce((obj, targetCurrency) => {
-
     obj[targetCurrency] = formatRate(rates[targetCurrency]);
     return obj;
   }, {});
@@ -29,11 +31,35 @@ const filterAndFormatData = (currencyData, allCurrencies) => {
     baseCurrency,
     rates: filteredRates
   }
-  // const targetRates = {};
-  // targetRates[baseCurrency] = filteredRates;
-  // return targetRates;
+}
+
+const reshapeTargetPrices = (targetPrice, targetCurrencies) => {
+  const filteredTargetPrices = targetPrice.filter((targetData) => targetCurrencies.includes(targetData.currencyName))
+      .map((targetData) => {
+        const {currencyName, currencyPrice} = targetData;
+        return {
+          [currencyName]: currencyPrice
+        }
+      });
+  return flattenObject(filteredTargetPrices);
+}
+
+const formatExchangeRateData = (currencyData, baseCurrencies, targetCurrencies) => {
+  const baseCurrencyData = currencyData.filter((data) => baseCurrencies.includes(data.baseCurrency))
+  .map((data) => {
+    const { baseCurrency, targetCurrencies: targetPrice } = data;
+     
+    const formattedTargetPrices = reshapeTargetPrices(targetPrice, targetCurrencies);
+    return {
+      [baseCurrency]: formattedTargetPrices
+    }
+  })
+
+ return flattenObject(baseCurrencyData);
+
 }
 
 export {
-  getCoinbaseDataForCurrency, extractDataFromCoinbaseResponse, filterAndFormatData
+  getCoinbaseDataForCurrency, extractDataFromCoinbaseResponse,
+  filterAndFormatData, formatExchangeRateData
 };

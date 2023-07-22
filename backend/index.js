@@ -1,7 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
 
-import { getCoinbaseDataForCurrency, filterAndFormatData, extractDataFromCoinbaseResponse } from './utils.js'
+import { getCoinbaseDataForCurrency, filterAndFormatData,
+  extractDataFromCoinbaseResponse, formatExchangeRateData } from './utils.js'
 import { savePriceAtTime } from './database/priceConversionAtTime/create.js'
 import { isCollectionEmpty, getMostRecentBatch } from './database/priceConversionAtTime/read.js';
 
@@ -31,7 +32,7 @@ async function connectToDatabase() {
 const fetchCurrencyData = async (allCurrencies) => {
   const rawCurrencyResponse =  await Promise.all(allCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
   const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
-                          .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, allCurrencies))
+    .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, allCurrencies))
   
   const queryDate = new Date();
   await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
@@ -43,6 +44,8 @@ await connectToDatabase();
 setInterval(() => fetchCurrencyData(allCurrencies), 100000);  // 100000 ms = 100 s
 
 app.get('/exchange-rates', async (req, res) => {
+  const { base } = req.query;
+
   try {
     const collectionIsEmpty = await isCollectionEmpty();
     if (collectionIsEmpty) {
@@ -50,28 +53,10 @@ app.get('/exchange-rates', async (req, res) => {
     }
 
     const currencyData = await getMostRecentBatch();
-    const { base } = req.query;
     const baseCurrencies = baseCurrencyOptions[base]
     const targetCurrencies = base === "fiat" ? crypto : fiat;
-
-    const baseCurrencyData = currencyData.filter((data) => baseCurrencies.includes(data.baseCurrency))
-      .map((data) => {
-        const { baseCurrency, targetCurrencies: targetPrice } = data;
-        const filteredTargetPrices = targetPrice.filter((targetData) => targetCurrencies.includes(targetData.currencyName))
-          .map((targetData) => {
-            const {currencyName, currencyPrice} = targetData;
-            return {
-              [currencyName]: currencyPrice
-            }
-          });
-        const flattenTargetPrices = Object.assign({}, ...filteredTargetPrices);
-        return {
-          [baseCurrency]: flattenTargetPrices
-        }
-      })
-    
-    const flattenedBaseCurrencyData = Object.assign({}, ...baseCurrencyData)
-    res.json(flattenedBaseCurrencyData);
+    const formattedData = formatExchangeRateData(currencyData, baseCurrencies, targetCurrencies);
+   res.json(formattedData);
   } catch (error) {
     res.status(500).json({error});
   }
