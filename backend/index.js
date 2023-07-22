@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 import { getCoinbaseDataForCurrency, filterAndFormatData,
   extractDataFromCoinbaseResponse, formatExchangeRateData } from './utils.js'
@@ -7,9 +8,10 @@ import { savePriceAtTime } from './database/priceConversionAtTime/create.js'
 import { isCollectionEmpty, getMostRecentBatch } from './database/priceConversionAtTime/read.js';
 
 const app = express();
-const port = 8000;
+dotenv.config();
 
-const uri = 'mongodb://localhost:27017/currency_data';
+const port = process.env.SERVER_PORT;
+const uri = process.env.MONGO_URI;
 
 const crypto = ['BTC', 'DOGE', 'ETH'];
 const fiat = ['USD', 'SGD', 'EUR'];
