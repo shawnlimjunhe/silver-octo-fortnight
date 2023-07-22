@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 import { getCoinbaseDataForCurrency, filterAndFormatData, extractDataFromCoinbaseResponse } from './utils.js'
 import { savePriceAtTime } from './database/priceConversionAtTime/create.js'
+import { isCollectionEmpty } from './database/priceConversionAtTime/read.js';
 
 const app = express();
 const port = 8000;
@@ -44,6 +45,11 @@ setInterval(() => fetchCurrencyData(allCurrencies), 100000);  // 100000 ms = 100
 
 app.get('/exchange-rates', async (req, res) => {
   try {
+    const collectionIsEmpty = await isCollectionEmpty();
+    if (collectionIsEmpty) {
+      await fetchCurrencyData(allCurrencies);
+    }
+
     const { base } = req.query;
     // const baseCurrencies = baseCurrencyOptions[base]
     // const targetCurrencies = base === "fiat" ? crypto : fiat;
