@@ -1,11 +1,3 @@
-import axios from 'axios';
-
-const formQueryUrl = (currency) => `https://api.coinbase.com/v2/exchange-rates?currency=${currency}`;
-
-const getCoinbaseDataForCurrency = (currency) =>  axios.get(formQueryUrl(currency));
-
-const extractDataFromCoinbaseResponse = (response) => response.data.data;
-
 const flattenObject = (data) => Object.assign({}, ...data);
 
 const formatRate = (rate) => {
@@ -60,6 +52,5 @@ const formatExchangeRateData = (currencyData, baseCurrencies, targetCurrencies) 
 }
 
 export {
-  getCoinbaseDataForCurrency, extractDataFromCoinbaseResponse,
   filterAndFormatData, formatExchangeRateData
 };

@@ -2,10 +2,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import { connectToDatabase, loadCurrencies } from './setup.js';
-import { getCoinbaseDataForCurrency, filterAndFormatData,
-  extractDataFromCoinbaseResponse, formatExchangeRateData } from './utils.js'
-import { savePriceAtTime } from './database/priceConversionAtTime/create.js'
+import { formatExchangeRateData } from './utils.js'
 import { isCollectionEmpty, getMostRecentBatch } from './database/priceConversionAtTime/read.js';
+import { fetchAndPersistCurrencyData } from './coinBaseClient.js';
 
 const app = express();
 dotenv.config();
@@ -18,16 +17,6 @@ const currency_path = process.env.CURRENCY_FILEPATH;
 await connectToDatabase(uri);
 const { crypto, fiat, allCurrencies } = await loadCurrencies(currency_path);
 
-const fetchCurrencyData = async (allCurrencies) => {
-  const rawCurrencyResponse =  await Promise.all(allCurrencies.map((currency) => getCoinbaseDataForCurrency(currency)));
-  const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
-    .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, allCurrencies))
-  
-  const queryDate = new Date();
-  await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
-  return filteredData
-}
-
 const currencyMapping = {
   fiat: {
     baseCurrencies: fiat,
@@ -39,7 +28,7 @@ const currencyMapping = {
   }
 };
 
-setInterval(() => fetchCurrencyData(allCurrencies), 100000);  // 100000 ms = 100 s
+setInterval(() => fetchAndPersistCurrencyData(allCurrencies), 10000);  // 100000 ms = 100 s
 
 app.get('/exchange-rates', async (req, res) => {
   const { base } = req.query;
@@ -47,7 +36,7 @@ app.get('/exchange-rates', async (req, res) => {
   try {
     const collectionIsEmpty = await isCollectionEmpty();
     if (collectionIsEmpty) {
-      await fetchCurrencyData(allCurrencies);
+      await fetchAndPersistCurrencyData(allCurrencies);
     }
 
     const currencyData = await getMostRecentBatch();
