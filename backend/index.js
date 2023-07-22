@@ -39,8 +39,8 @@ app.get('/exchange-rates', async (req, res) => {
     const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
                             .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, targetCurrencies))
     
-    console.log(filteredData)
-    await savePriceAtTime(filteredData[0])
+    const queryDate = new Date();
+    await Promise.all(filteredData.map((data) => savePriceAtTime(data, queryDate)));
     // const flattenedData = Object.assign({}, ...filteredData);
 
     res.json(filteredData);
