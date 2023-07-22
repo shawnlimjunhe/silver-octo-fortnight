@@ -1,4 +1,4 @@
-import { PriceConversionAtTime } from "./priceConversionAtTime.js";
+import { PriceConversionAtTime } from "./priceConversionAtTime/schemas/priceConversionAtTime.js";
 
 const savePriceAtTime = async (data, queryDate) => {
   const {baseCurrency, rates} = data
