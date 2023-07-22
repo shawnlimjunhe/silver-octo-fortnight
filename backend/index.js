@@ -16,15 +16,21 @@ const baseCurrencyOptions = {
 const formQueryUrl = (currency) => `${targetUrl}?currency=${currency}`;
 
 app.get('/exchange-rates', async (req, res) => {
-  const { base } = req.query;
+  try {
+    const { base } = req.query;
 
-  const baseCurrencies = baseCurrencyOptions[base]
-
-  const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => axios.get(formQueryUrl(currency))));
-
-  console.log(rawCurrencyResponse);
-
-  res.json({'queryParam': base});
+    const baseCurrencies = baseCurrencyOptions[base]
+  
+    const rawCurrencyResponse =  await Promise.all(baseCurrencies.map((currency) => axios.get(formQueryUrl(currency))));
+  
+    const unfilteredResponseData = rawCurrencyResponse
+  
+    console.log(rawCurrencyResponse);
+  
+    res.json({'queryParam': base});
+  } catch (error) {
+    res.status(500).json({error});
+  }
 })
 
 app.listen(port, () => {
