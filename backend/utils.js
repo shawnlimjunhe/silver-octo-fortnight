@@ -23,9 +23,14 @@ const filterAndFormatData = (currencyData, targetCurrencies) => {
     obj[targetCurrency] = formatRate(rates[targetCurrency]);
     return obj;
   }, {});
-  const targetRates = {};
-  targetRates[baseCurrency] = filteredRates;
-  return targetRates;
+  
+  return {
+    baseCurrency,
+    rates: filteredRates
+  }
+  // const targetRates = {};
+  // targetRates[baseCurrency] = filteredRates;
+  // return targetRates;
 }
 
 export {

@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import { getCoinbaseDataForCurrency, filterAndFormatData, extractDataFromCoinbaseResponse } from './utils.js'
+import { savePriceAtTime } from './database/insert.js'
 
 const app = express();
 const port = 8000;
@@ -38,9 +39,11 @@ app.get('/exchange-rates', async (req, res) => {
     const filteredData = rawCurrencyResponse.map((response) => extractDataFromCoinbaseResponse(response))
                             .map((unfilteredCurrencyData) => filterAndFormatData(unfilteredCurrencyData, targetCurrencies))
     
-    const flattenedData = Object.assign({}, ...filteredData);
+    console.log(filteredData)
+    await savePriceAtTime(filteredData[0])
+    // const flattenedData = Object.assign({}, ...filteredData);
 
-    res.json(flattenedData);
+    res.json(filteredData);
   } catch (error) {
     res.status(500).json({error});
   }
