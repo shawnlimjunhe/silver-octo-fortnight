@@ -4,9 +4,6 @@ import ItemBox from './itemBox';
 
 const ScrollList = ({data, onClose}) => {
 
-
-
-
 return (
   <div className={`scroll-list-container ${data.length > 0 ? 'open' : ''}`}>
     <button class='backdrop' onClick={onClose}></button>
