@@ -59,6 +59,7 @@ app.get('/historical-rates', validateHistoricalRateQuery, async (req, res) => {
   const endTimeStamp = req.query.end ? req.query.end : new Date();
 
   const documents = await getCurrencyBetweenDates(startTimestamp, endTimeStamp, baseCurrency);
+  
   if (documents.length === 0) {
     return res.json({
       results: [],
