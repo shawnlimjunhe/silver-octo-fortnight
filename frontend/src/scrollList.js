@@ -4,24 +4,25 @@ import './scrollList.css'
 const ScrollList = ({data, onClose}) => {
 
   const handleItemClick = (item) => {
-    // Implement the pop-out effect here when an item is clicked.
     console.log('Item clicked:', item);
   };
 
 return (
-    <div className={`scroll-list ${data.length > 0 ? 'open' : ''}`}>
-      <button onClick={onClose}>Close</button>
-      <div className='scroll-list-header'>
-        <p>Select Provider</p>
+  <div className={`scroll-list-container ${data.length > 0 ? 'open' : ''}`}>
+    <button class='backdrop' onClick={onClose}></button>
+    <div className='scroll-list'>
+        <div className='scroll-list-header'>
+          <p className='scroll-list-header-title'>Select Provider</p>
+        </div>
+        <ul>
+          {data.map((item) => (
+            <li key={item} onClick={() => handleItemClick(item)}>
+              {item}
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul>
-        {data.map((item) => (
-          <li key={item} onClick={() => handleItemClick(item)}>
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
+  </div>
   );
 };
 

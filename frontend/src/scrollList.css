@@ -1,22 +1,42 @@
-.scroll-list {
+.scroll-list-container {
+  display: flex;
   position: fixed;
   top: 0;
-  right: -580px; /* Start from outside the screen */
-  width: 580px;
+  right: -100%; /* Start from outside the screen */
+  width: 100vw;
   height: 100vh;
-  background-color: #42607B;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: right 0.3s ease-in-out;
   z-index: 9999;
 }
 
-.scroll-list.open {
-  right: 0; /* Slide in from the right*/
+.backdrop {
+  width: calc(100vw - 580px);
+  opacity: 70%;
+  background-color: black;
+  cursor: pointer;
+}
+
+.scroll-list {
+  background-color: #42607b;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 580px;
+}
+
+/* Add this class to show the scroll list when open */
+.scroll-list-container.open {
+  right: 0; /* Slide in from the right */
 }
 
 .scroll-list-header {
-  padding: 10px;
-  background-color: #42607B;
+  padding: 5px;
+  margin: 0;
+  background-color: #42607b;
+}
+
+.scroll-list-header-title {
+  margin: 14px;
+  font-size: 32px;
+  font-weight: lighter;
 }
 
 .scroll-list ul {
@@ -35,3 +55,4 @@
 .scroll-list li:last-child {
   border-bottom: none;
 }
+

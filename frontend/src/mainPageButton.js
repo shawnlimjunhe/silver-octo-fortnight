@@ -10,8 +10,6 @@ function MainPageButton(props) {
   const handleClick = async () => {
     try {
       const response = await axios.get('https://api.apis.guru/v2/providers.json');
-      alert('Button clicked!');
-
       const dataArray = Object.values(response.data.data);
       setListData(dataArray);
       setIsListOpen(true);
