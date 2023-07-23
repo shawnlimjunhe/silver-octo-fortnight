@@ -1,16 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 const priceConversionAtTimeSchema = new mongoose.Schema({
   baseCurrency: String,
   targetCurrencies: [
-    { 
-      currencyName: String, 
+    {
+      currencyName: String,
       currencyPrice: Number
     }
   ],
   timestamp: Date
-});
+})
 
-const PriceConversionAtTime = mongoose.model('PriceConversionAtTime', priceConversionAtTimeSchema)
+const PriceConversionAtTime = mongoose.model(
+  'PriceConversionAtTime',
+  priceConversionAtTimeSchema
+)
 
 export { PriceConversionAtTime }

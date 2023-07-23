@@ -1,20 +1,22 @@
-import { PriceConversionAtTime } from "./schemas/priceConversionAtTime.js";
+import { PriceConversionAtTime } from './schemas/priceConversionAtTime.js'
 
 const savePriceAtTime = async (data, queryDate) => {
-  const {baseCurrency, rates} = data
+  const { baseCurrency, rates } = data
 
-  const targetCurrencies = Object.entries(rates).map(([currencyName, currencyPrice]) => ({
-    currencyName,
-    currencyPrice,
-  }));
+  const targetCurrencies = Object.entries(rates).map(
+    ([currencyName, currencyPrice]) => ({
+      currencyName,
+      currencyPrice
+    })
+  )
 
   const priceAtTime = new PriceConversionAtTime({
     baseCurrency,
     targetCurrencies,
-    timestamp: queryDate,
-  });
+    timestamp: queryDate
+  })
 
-  await priceAtTime.save();
+  await priceAtTime.save()
 }
 
 export { savePriceAtTime }
