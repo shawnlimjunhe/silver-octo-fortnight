@@ -1,14 +1,26 @@
 import mongoose from 'mongoose'
 
 const priceConversionAtTimeSchema = new mongoose.Schema({
-  baseCurrency: String,
+  baseCurrency: {
+    type: String,
+    required: true
+  },
   targetCurrencies: [
     {
-      currencyName: String,
-      currencyPrice: Number
+      currencyName: {
+        type: String,
+        required: true
+      },
+      currencyPrice: {
+        type: Number,
+        required: true
+      }
     }
   ],
-  timestamp: Date
+  timestamp: {
+    type: Date,
+    required: true
+  }
 })
 
 const PriceConversionAtTime = mongoose.model(
