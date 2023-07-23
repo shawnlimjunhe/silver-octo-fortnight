@@ -2,15 +2,11 @@ import './App.css';
 import MainPageButton from './mainPageButton';
 
 function App() {
-  const handleClick = () => {
-    alert('Button clicked!');
-  };
-
   return (
     <div className="App">
       <header className="App-header">
         <div>
-          <MainPageButton label="Explore web APIs" onClick={handleClick} />
+          <MainPageButton label="Explore web APIs"/>
         </div>
       </header>
     </div>
