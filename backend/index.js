@@ -5,6 +5,7 @@ import { connectToDatabase, loadCurrencies } from './setup.js';
 import { formatExchangeRateData } from './utils.js'
 import { isCollectionEmpty, getMostRecentBatch } from './database/priceConversionAtTime/read.js';
 import { fetchAndPersistCurrencyData } from './coinBaseClient.js';
+import { validateBaseParam } from './middleware.js';
 
 const app = express();
 dotenv.config();
@@ -28,9 +29,9 @@ const currencyMapping = {
   }
 };
 
-setInterval(() => fetchAndPersistCurrencyData(allCurrencies), 10000);  // 100000 ms = 100 s
+setInterval(() => fetchAndPersistCurrencyData(allCurrencies), 100000);  // 100000 ms = 100 s
 
-app.get('/exchange-rates', async (req, res) => {
+app.get('/exchange-rates', validateBaseParam, async (req, res) => {
   const { base } = req.query;
 
   try {

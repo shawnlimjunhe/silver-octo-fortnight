@@ -8,8 +8,6 @@ const getCoinbaseData = (currency) =>  axios.get(formQueryUrl(currency));
 
 const extractCoinbaseData = (response) => response.data.data;
 
-
-
 const fetchAndPersistCurrencyData = async (allCurrencies) => {
   const rawCurrencyResponse =  await Promise.all(allCurrencies.map((currency) => getCoinbaseData(currency)));
   const filteredData = rawCurrencyResponse.map((response) => extractCoinbaseData(response))
