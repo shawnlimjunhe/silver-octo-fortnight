@@ -5,18 +5,17 @@ import { connectToDatabase, loadCurrencies } from './setup.js';
 import { formatExchangeRateData } from './utils.js'
 import { isCollectionEmpty, getMostRecentBatch } from './database/priceConversionAtTime/read.js';
 import { fetchAndPersistCurrencyData } from './coinBaseClient.js';
-import { validateBaseParam } from './middleware.js';
+import { validateExchangeRateQuery, validateHistoricalRateQuery } from './middleware.js';
 
 const app = express();
 dotenv.config();
 
 const port = process.env.SERVER_PORT;
 const uri = process.env.MONGO_URI;
-const currency_path = process.env.CURRENCY_FILEPATH;
 
 // setup functions
 await connectToDatabase(uri);
-const { crypto, fiat, allCurrencies } = await loadCurrencies(currency_path);
+const { crypto, fiat, allCurrencies } = await loadCurrencies();
 
 const currencyMapping = {
   fiat: {
@@ -31,7 +30,7 @@ const currencyMapping = {
 
 setInterval(() => fetchAndPersistCurrencyData(allCurrencies), 100000);  // 100000 ms = 100 s
 
-app.get('/exchange-rates', validateBaseParam, async (req, res) => {
+app.get('/exchange-rates', validateExchangeRateQuery, async (req, res) => {
   const { base } = req.query;
 
   try {
@@ -48,6 +47,17 @@ app.get('/exchange-rates', validateBaseParam, async (req, res) => {
   } catch (error) {
     res.status(500).json({error});
   }
+})
+
+app.get('/historical-rates', validateHistoricalRateQuery ,async (req, res) => {
+  const { 
+    base_currency: baseCurrency,
+    target_currency: targetCurrency,
+    start: startTimestamp,
+    end: endTimestamp,
+  } = req.query;
+
+  return res.json();
 })
 
 app.listen(port, () => {

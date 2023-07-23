@@ -11,8 +11,8 @@ const connectToDatabase = async (uri) => {
   }
 }
 
-const loadCurrencies = async (currency_path) => {
-  const rawData = await fs.readFile(currency_path, 'utf-8');
+const loadCurrencies = async () => {
+  const rawData = await fs.readFile(process.env.CURRENCY_FILEPATH, 'utf-8');
     const data = JSON.parse(rawData);
 
     const { crypto, fiat } = data;
