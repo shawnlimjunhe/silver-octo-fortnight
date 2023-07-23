@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 
 import { connectToDatabase, loadCurrencies } from './setup.js';
-import { formatExchangeRateData } from './utils.js'
+import { formatExchangeRateData, formatHistorialData } from './utils.js'
 import { isCollectionEmpty, getMostRecentBatch, getCurrencyBetweenDates } from './database/priceConversionAtTime/read.js';
 import { fetchAndPersistCurrencyData } from './coinBaseClient.js';
 import { validateExchangeRateQuery, validateHistoricalRateQuery } from './middleware.js';
@@ -65,15 +65,7 @@ app.get('/historical-rates', validateHistoricalRateQuery, async (req, res) => {
     })
   }
 
-  const results = documents.map((priceAtTime) => {
-    const { targetCurrencies, timestamp } = priceAtTime;
-    const value = targetCurrencies.find((currencyData) => currencyData.currencyName === targetCurrency).currencyPrice
-
-    return {
-      timestamp: timestamp.getTime(),
-      value
-    };
-  })
+  const results = documents.map((priceConversionAtTime) => formatHistorialData(priceConversionAtTime, targetCurrency))
 
   return res.json({results: results});
 })

@@ -48,9 +48,18 @@ const formatExchangeRateData = (currencyData, baseCurrencies, targetCurrencies) 
   })
 
  return flattenObject(baseCurrencyData);
+}
 
+const formatHistorialData = (priceAtTime, targetCurrency) => {
+  const { targetCurrencies, timestamp } = priceAtTime;
+  const value = targetCurrencies.find((currencyData) => currencyData.currencyName === targetCurrency).currencyPrice
+
+  return {
+    timestamp: timestamp.getTime(),
+    value
+  };
 }
 
 export {
-  filterAndFormatData, formatExchangeRateData
+  filterAndFormatData, formatExchangeRateData, formatHistorialData
 };
