@@ -1,0 +1,37 @@
+.scroll-list {
+  position: fixed;
+  top: 0;
+  right: -580px; /* Start from outside the screen */
+  width: 580px;
+  height: 100vh;
+  background-color: #42607B;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease-in-out;
+  z-index: 9999;
+}
+
+.scroll-list.open {
+  right: 0; /* Slide in from the right*/
+}
+
+.scroll-list-header {
+  padding: 10px;
+  background-color: #42607B;
+}
+
+.scroll-list ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.scroll-list li {
+  text-align: left;
+  padding: 15px 50px;
+  font-size: 32px;
+  font-weight: lighter;
+}
+
+.scroll-list li:last-child {
+  border-bottom: none;
+}

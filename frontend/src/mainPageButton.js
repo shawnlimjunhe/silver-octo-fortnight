@@ -4,6 +4,7 @@ import './mainPageButton.css'
 import ScrollList from './scrollList';
 
 function MainPageButton(props) {
+  const [isListOpen, setIsListOpen] = useState(false);
   const [listData, setListData] = useState([]);
 
   const handleClick = async () => {
@@ -13,6 +14,7 @@ function MainPageButton(props) {
 
       const dataArray = Object.values(response.data.data);
       setListData(dataArray);
+      setIsListOpen(true);
 
     } catch (error) {
       console.error(error)
@@ -20,12 +22,16 @@ function MainPageButton(props) {
     
   };
 
+  const handleListClose = () => {
+    setIsListOpen(false);
+  };
+
   return (
     <div>
         <button className='button' onClick={handleClick}>
           {props.label}
         </button>
-        <ScrollList data = {listData}></ScrollList>
+        {isListOpen && <ScrollList data = {listData} onClose={handleListClose}></ScrollList>}
     </div>
     
   );
