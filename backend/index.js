@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 import { connectToDatabase, loadCurrencies } from './setup.js';
 import { formatExchangeRateData } from './utils.js'
-import { isCollectionEmpty, getMostRecentBatch } from './database/priceConversionAtTime/read.js';
+import { isCollectionEmpty, getMostRecentBatch, getCurrencyBetweenDates } from './database/priceConversionAtTime/read.js';
 import { fetchAndPersistCurrencyData } from './coinBaseClient.js';
 import { validateExchangeRateQuery, validateHistoricalRateQuery } from './middleware.js';
 
@@ -49,15 +49,33 @@ app.get('/exchange-rates', validateExchangeRateQuery, async (req, res) => {
   }
 })
 
-app.get('/historical-rates', validateHistoricalRateQuery ,async (req, res) => {
+app.get('/historical-rates', validateHistoricalRateQuery, async (req, res) => {
   const { 
     base_currency: baseCurrency,
     target_currency: targetCurrency,
     start: startTimestamp,
-    end: endTimestamp,
   } = req.query;
 
-  return res.json();
+  const endTimeStamp = req.query.end ? req.query.end : new Date();
+
+  const documents = await getCurrencyBetweenDates(startTimestamp, endTimeStamp, baseCurrency);
+  if (documents.length === 0) {
+    return res.json({
+      results: [],
+    })
+  }
+
+  const results = documents.map((priceAtTime) => {
+    const { targetCurrencies, timestamp } = priceAtTime;
+    const value = targetCurrencies.find((currencyData) => currencyData.currencyName === targetCurrency).currencyPrice
+
+    return {
+      timestamp: timestamp.getTime(),
+      value
+    };
+  })
+
+  return res.json({results: results});
 })
 
 app.listen(port, () => {

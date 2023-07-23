@@ -22,4 +22,13 @@ const getMostRecentBatch = async () => {
             .exec(); 
 }
 
-export { isCollectionEmpty, getMostRecentBatch };
+const getCurrencyBetweenDates = async (start, end, baseCurrency) => {
+    const query = {
+      baseCurrency,
+      timestamp: { $gte: start, $lte: end }
+    };
+
+    return PriceConversionAtTime.find(query).exec();
+}
+
+export { isCollectionEmpty, getMostRecentBatch, getCurrencyBetweenDates };
