@@ -23,6 +23,9 @@ const fetchAndPersistCurrencyData = async (allCurrencies) => {
   await Promise.all(
     filteredData.map((data) => savePriceAtTime(data, queryDate))
   )
+
+  console.info(`Fetched and persisted currency data at ${queryDate.toString()}`)
+
   return filteredData
 }
 
