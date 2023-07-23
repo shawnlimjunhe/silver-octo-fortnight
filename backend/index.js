@@ -1,18 +1,18 @@
 import express from 'express'
 import dotenv from 'dotenv'
 
-import { connectToDatabase, loadCurrencies } from './setup.js'
-import { formatExchangeRateData, formatHistorialData } from './utils.js'
+import { connectToDatabase, loadCurrencies } from './src/setup.js'
+import { formatExchangeRateData, formatHistorialData } from './src/utils.js'
 import {
   isCollectionEmpty,
   getMostRecentBatch,
   getCurrencyBetweenDates
 } from './database/priceConversionAtTime/read.js'
-import { fetchAndPersistCurrencyData } from './coinBaseClient.js'
+import { fetchAndPersistCurrencyData } from './src/coinBaseClient.js'
 import {
   validateExchangeRateQuery,
   validateHistoricalRateQuery
-} from './middleware.js'
+} from './src/middleware.js'
 
 const app = express()
 dotenv.config()

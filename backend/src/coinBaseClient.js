@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { savePriceAtTime } from './database/priceConversionAtTime/create.js'
+import { savePriceAtTime } from '../database/priceConversionAtTime/create.js'
 import { filterAndFormatData } from './utils.js'
 
 const formQueryUrl = (currency) =>
