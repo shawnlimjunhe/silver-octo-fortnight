@@ -1,11 +1,11 @@
 import React from 'react';
 import './scrollList.css'
+import ItemBox from './itemBox';
 
 const ScrollList = ({data, onClose}) => {
 
-  const handleItemClick = (item) => {
-    console.log('Item clicked:', item);
-  };
+
+
 
 return (
   <div className={`scroll-list-container ${data.length > 0 ? 'open' : ''}`}>
@@ -16,9 +16,7 @@ return (
         </div>
         <ul>
           {data.map((item) => (
-            <li key={item} onClick={() => handleItemClick(item)}>
-              {item}
-            </li>
+            <ItemBox item={item}></ItemBox>
           ))}
         </ul>
       </div>
