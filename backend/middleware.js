@@ -14,13 +14,13 @@ const validateExchangeRateQuery = (req, res, next) => {
   next()
 }
 
-const validateHistoricalRateQuery = (req, res, next) => {
+const validateHistoricalRateQuery = (allCurrencies) => (req, res, next) => {
   const querySchema = Joi.object({
     base_currency: Joi.string()
-      .valid('BTC', 'DOGE', 'ETH', 'USD', 'SGD', 'EUR')
+      .valid(...allCurrencies)
       .required(),
     target_currency: Joi.string()
-      .valid('BTC', 'DOGE', 'ETH', 'USD', 'SGD', 'EUR')
+      .valid(...allCurrencies)
       .required(),
     start: Joi.date().timestamp().required(),
     end: Joi.date().timestamp().greater(Joi.ref('start'))

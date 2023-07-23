@@ -60,33 +60,37 @@ app.get('/exchange-rates', validateExchangeRateQuery, async (req, res) => {
   }
 })
 
-app.get('/historical-rates', validateHistoricalRateQuery, async (req, res) => {
-  const {
-    base_currency: baseCurrency,
-    target_currency: targetCurrency,
-    start: startTimestamp
-  } = req.query
+app.get(
+  '/historical-rates',
+  validateHistoricalRateQuery(allCurrencies),
+  async (req, res) => {
+    const {
+      base_currency: baseCurrency,
+      target_currency: targetCurrency,
+      start: startTimestamp
+    } = req.query
 
-  const endTimeStamp = req.query.end ? req.query.end : new Date()
+    const endTimeStamp = req.query.end ? req.query.end : new Date()
 
-  const documents = await getCurrencyBetweenDates(
-    startTimestamp,
-    endTimeStamp,
-    baseCurrency
-  )
+    const documents = await getCurrencyBetweenDates(
+      startTimestamp,
+      endTimeStamp,
+      baseCurrency
+    )
 
-  if (documents.length === 0) {
-    return res.json({
-      results: []
-    })
+    if (documents.length === 0) {
+      return res.json({
+        results: []
+      })
+    }
+
+    const results = documents.map((priceConversionAtTime) =>
+      formatHistorialData(priceConversionAtTime, targetCurrency)
+    )
+
+    return res.json({ results })
   }
-
-  const results = documents.map((priceConversionAtTime) =>
-    formatHistorialData(priceConversionAtTime, targetCurrency)
-  )
-
-  return res.json({ results })
-})
+)
 
 app.listen(port, () => {
   console.log(`Now listening on port ${port}`)
