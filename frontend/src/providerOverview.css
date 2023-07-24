@@ -6,12 +6,11 @@
 .title {
   font-size: 25px;
   padding-left: 10px;
-  padding-top: 5px;
   vertical-align: text-top;
 }
 
 .parent-container {
   padding-top: 10px;
   display: flex;
-  vertical-align: center;
+  align-items: center;
 }
