@@ -5,6 +5,9 @@
   border-color: aquamarine;
   border-style: none;
   padding: 10px 15px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  max-height: 110px;
 }
 
 .item-row {

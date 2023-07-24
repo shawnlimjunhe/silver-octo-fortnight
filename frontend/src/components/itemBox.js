@@ -16,7 +16,8 @@ const ItemBox = ({item}) => {
   const collapseColour = '#42607B';
 
   const backgroundStyle = {
-    background: isBoxExpanded ? expandedColour : collapseColour
+    background: isBoxExpanded ? expandedColour : collapseColour,
+    maxHeight: isBoxExpanded ? '100px' : '59px'
   } 
 
   const handleChevronClick = async (provider_name, event) => {
