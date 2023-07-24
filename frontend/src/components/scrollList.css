@@ -1,21 +1,17 @@
 .scroll-list-container {
   position: fixed;
   top: 0;
-  right: -100%; /* Start from outside the screen */
   width: 100vw;
   height: 100vh;
   display: flex;
-  transition: right 0.3s ease-in-out;
+  transition: right 0.4s ease-in-out;
   z-index: 9990;
-}
-
-.scroll-list-container.open {
-  right: 0;
 }
 
 .backdrop {
   width: calc(100vw - 580px);
   background-color: black;
+  transition: opacity 0.5s ease-in-out;
   opacity: 70%;
   cursor: pointer;
 }
