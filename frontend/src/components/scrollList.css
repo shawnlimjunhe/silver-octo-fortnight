@@ -1,31 +1,31 @@
 .scroll-list-container {
-  display: flex;
   position: fixed;
   top: 0;
   right: -100%; /* Start from outside the screen */
   width: 100vw;
   height: 100vh;
+  display: flex;
   transition: right 0.3s ease-in-out;
   z-index: 9990;
 }
 
+.scroll-list-container.open {
+  right: 0;
+}
+
 .backdrop {
   width: calc(100vw - 580px);
-  opacity: 70%;
   background-color: black;
+  opacity: 70%;
   cursor: pointer;
 }
 
 .scroll-list {
+  width: 580px;
   max-height: 100vh;
   overflow-y: auto;
   background-color: #42607b;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 580px;
-}
-
-.scroll-list-container.open {
-  right: 0;
 }
 
 .scroll-list-header {
@@ -56,4 +56,3 @@
 .scroll-list li:last-child {
   border-bottom: none;
 }
-
