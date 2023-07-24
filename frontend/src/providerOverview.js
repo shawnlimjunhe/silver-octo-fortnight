@@ -1,16 +1,30 @@
-import React from "react"
+import React, { useState } from "react"
 import './providerOverview.css'
+import ProviderDetails from "./providerDetails";
 
 const ProviderOverview = ({title, logoUrl, providerData}) => {
-  const handleOnClick = (providerData) => {
-    console.log(providerData)
+  const [showDetails, setShowDetails] = useState(false);
+  
+  console.log('in overview', providerData)
+
+  const handleOpenDetails = () => {
+    setShowDetails(true)
+  }
+
+  const handleCloseDetails = () => {
+    setShowDetails(false);
   }
   
   return (
-    <div className="parent-container" onClick={() => handleOnClick(providerData)}>
-      <img src={logoUrl} alt='' className="logo"></img>
-      <span className="title">{title}</span>
+    <div>
+        <div className="parent-container" onClick={handleOpenDetails}>
+          <img src={logoUrl} alt='' className="logo"></img>
+          <span className="title">{title}</span>
+        </div>
+        {showDetails && <ProviderDetails providerData={providerData} onClose={handleCloseDetails} />}
+
     </div>
+    
   )
 }
 

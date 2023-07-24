@@ -6,7 +6,7 @@
   width: 100vw;
   height: 100vh;
   transition: right 0.3s ease-in-out;
-  z-index: 9999;
+  z-index: 9990;
 }
 
 .backdrop {
@@ -24,9 +24,8 @@
   width: 580px;
 }
 
-/* Add this class to show the scroll list when open */
 .scroll-list-container.open {
-  right: 0; /* Slide in from the right */
+  right: 0;
 }
 
 .scroll-list-header {
