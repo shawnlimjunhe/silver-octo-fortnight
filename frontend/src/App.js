@@ -1,5 +1,5 @@
 import './App.css';
-import MainPageButton from './mainPageButton';
+import MainPageButton from './components/mainPageButton';
 
 function App() {
   return (
