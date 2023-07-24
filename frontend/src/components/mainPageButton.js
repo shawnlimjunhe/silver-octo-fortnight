@@ -21,7 +21,7 @@ function MainPageButton(props) {
       setScrollListExist(true);
       setTimeout(() => {
         setIsListOpen(true)
-      }, 0.1)
+      }, 10)
 
     } catch (error) {
       console.error(error)
