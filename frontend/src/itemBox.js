@@ -36,7 +36,6 @@ const ItemBox = ({item}) => {
       }
 
       setIsBoxExpanded(!isBoxExpanded)
-      console.log('Chevron Clicked', provider_name);
     } catch (error) {
       console.error(error);
     }

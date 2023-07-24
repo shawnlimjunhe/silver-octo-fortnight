@@ -2,8 +2,6 @@ import React from "react";
 import './providerDetails.css'
 
 const ProviderDetails = ({providerData, onClose}) => {
-
-  console.log('in details', providerData)
   const {
     info,
     swaggerUrl: providerSwaggerAPI

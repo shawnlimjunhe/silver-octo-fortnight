@@ -5,8 +5,6 @@ import ProviderDetails from "./providerDetails";
 const ProviderOverview = ({title, logoUrl, providerData}) => {
   const [showDetails, setShowDetails] = useState(false);
   
-  console.log('in overview', providerData)
-
   const handleOpenDetails = () => {
     setShowDetails(true)
   }
